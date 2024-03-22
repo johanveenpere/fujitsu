@@ -18,9 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class DataImport {
     private final WeatherRepository repo;
@@ -59,7 +57,6 @@ public class DataImport {
         Document doc = builder.parse(response.toString());
         doc.normalize();
 
-        List<Weather> weatherList = new ArrayList<>();
         Node first = doc.getElementsByTagName("observations").item(0);
         long timestamp = Long.parseLong(first.getAttributes().getNamedItem("timestamp").getNodeValue());
         NodeList children = first.getChildNodes();
@@ -84,6 +81,7 @@ public class DataImport {
             };
             weather.airTemperature = Double.parseDouble(tags.item(9).getNodeValue());
             weather.windspeed = Double.parseDouble(tags.item(11).getNodeValue());
+            repo.save(weather);
         }
 
     }
