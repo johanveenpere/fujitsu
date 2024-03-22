@@ -6,5 +6,6 @@ public enum WeatherPhenomenon {
     RAIN,
     GLAZE,
     HAIL,
-    THUNDER
+    THUNDER,
+    OTHER
 }

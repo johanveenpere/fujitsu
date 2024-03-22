@@ -13,6 +13,6 @@ public class Weather {
     public String stationName;
     public String WMOCode;
     public double airTemperature;
-    public double windspeed;
     public WeatherPhenomenon weatherPhenomenon;
+    public double windspeed;
 }

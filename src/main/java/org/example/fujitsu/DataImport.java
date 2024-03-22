@@ -18,6 +18,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DataImport {
@@ -57,13 +59,31 @@ public class DataImport {
         Document doc = builder.parse(response.toString());
         doc.normalize();
 
-        Weather weather = new Weather();
+        List<Weather> weatherList = new ArrayList<>();
         Node first = doc.getElementsByTagName("observations").item(0);
-        weather.timestamp = Long.parseLong(first.getAttributes().getNamedItem("timestamp").getNodeValue());
+        long timestamp = Long.parseLong(first.getAttributes().getNamedItem("timestamp").getNodeValue());
         NodeList children = first.getChildNodes();
+        List<String> cities = Arrays.asList(new String []{"Tallinn-Harku", "Tartu-Tõravere", "Pärnu"});
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
-            child.get
+            NodeList tags = child.getChildNodes();
+            if (!cities.contains(tags.item(0).getNodeValue()))
+                continue;
+            Weather weather = new Weather();
+            weather.timestamp = timestamp;
+            weather.stationName = tags.item(0).getNodeValue();
+            weather.WMOCode = tags.item(1).getNodeValue();
+            weather.weatherPhenomenon = switch (tags.item(4).getNodeValue()) {
+                case "Sleet" -> WeatherPhenomenon.SLEET;
+                case "Snow" -> WeatherPhenomenon.SNOW;
+                case "Light shower", "Moderate shower", "Heavy shower", "Light rain", "Moderate rain", "Heavy rain"  -> WeatherPhenomenon.RAIN;
+                case "Glaze" -> WeatherPhenomenon.GLAZE;
+                case "Hail" -> WeatherPhenomenon.HAIL;
+                case "Thunder" -> WeatherPhenomenon.THUNDER;
+                default -> WeatherPhenomenon.OTHER;
+            };
+            weather.airTemperature = Double.parseDouble(tags.item(9).getNodeValue());
+            weather.windspeed = Double.parseDouble(tags.item(11).getNodeValue());
         }
 
     }
