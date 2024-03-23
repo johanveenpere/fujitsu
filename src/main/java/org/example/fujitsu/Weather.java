@@ -1,11 +1,9 @@
 package org.example.fujitsu;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
+@IdClass(WeatherId.class)
 public class Weather {
     @Id
     public Long timestamp;
@@ -13,6 +11,7 @@ public class Weather {
     public String stationName;
     public String WMOCode;
     public double airTemperature;
+    @Enumerated(EnumType.STRING)
     public WeatherPhenomenon weatherPhenomenon;
     public double windspeed;
 }

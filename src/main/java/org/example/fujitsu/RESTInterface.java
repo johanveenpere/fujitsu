@@ -1,5 +1,7 @@
 package org.example.fujitsu;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +17,7 @@ public class RESTInterface {
 
 
     @GetMapping("fee")
-    public Result fee(@RequestParam(value="city") String city, @RequestParam(value="vehicleType") String vehicleType) {
+    public ResponseEntity fee(@RequestParam(value="city") String city, @RequestParam(value="vehicleType") String vehicleType) {
 
         City city1;
         if(city.equals("Tartu")){
@@ -25,7 +27,7 @@ public class RESTInterface {
         } else if(city.equals("Parnu")){
             city1 = City.PARNU;
         } else {
-          return new Failure("missing value for city");
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("missing value for city");
         }
 
         Vehicle vehicle;
@@ -36,7 +38,7 @@ public class RESTInterface {
         }else if(vehicleType.equals("Bike")) {
             vehicle = Vehicle.BIKE;
         } else {
-            return new Failure("missing value for vehicle type");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("missing value for vehicle type");
         }
 
         Result result;
@@ -44,8 +46,10 @@ public class RESTInterface {
         try {
             result = businessRules.fee(city1, vehicle);
         } catch (BadWeatherException e) {
-            return new Failure(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (NoDataException e) {
+            throw new RuntimeException(e);
         }
-        return result;
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }

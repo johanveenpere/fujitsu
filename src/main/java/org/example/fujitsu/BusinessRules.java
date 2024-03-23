@@ -2,6 +2,8 @@ package org.example.fujitsu;
 
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 public class BusinessRules {
 
     private final WeatherRepository repo;
@@ -10,8 +12,12 @@ public class BusinessRules {
         this.repo = repo;
     }
 
-    public Result fee(City city, Vehicle vehicleType) throws BadWeatherException {
-        Weather weather = repo.findAll().get(0);
+    public Result fee(City city, Vehicle vehicleType) throws BadWeatherException, NoDataException {
+        List<Weather> results = repo.findAll();
+        if(results.size() == 0) {
+            throw new NoDataException();
+        }
+        Weather weather = results.get(0);
         double airTemperature = weather.airTemperature, windspeed = weather.windspeed;
         WeatherPhenomenon phenomenon = WeatherPhenomenon.RAIN;
 
