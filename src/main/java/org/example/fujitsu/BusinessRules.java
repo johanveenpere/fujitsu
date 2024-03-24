@@ -1,6 +1,9 @@
 package org.example.fujitsu;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -12,7 +15,9 @@ public class BusinessRules {
         this.repo = repo;
     }
 
-    public Result fee(City city, Vehicle vehicleType) throws BadWeatherException, NoDataException {
+
+    @Bean
+    public Double fee(City city, Vehicle vehicleType) throws BadWeatherException, NoDataException {
         List<Weather> results = repo.findAll();
         if(results.size() == 0) {
             throw new NoDataException();
@@ -41,6 +46,6 @@ public class BusinessRules {
         if (phenomenon == WeatherPhenomenon.SNOW|| phenomenon == WeatherPhenomenon.SLEET) weatherPhenomenonExtraFee = 1;
         if (phenomenon == WeatherPhenomenon.RAIN) weatherPhenomenonExtraFee = 0.5;
 
-        return new Success(BaseFee + airTempExtraFee + windspeedExtraFee + weatherPhenomenonExtraFee);
+        return (BaseFee + airTempExtraFee + windspeedExtraFee + weatherPhenomenonExtraFee);
     }
 }

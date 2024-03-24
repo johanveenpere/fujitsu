@@ -41,10 +41,10 @@ public class RESTInterface {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("missing value for vehicle type");
         }
 
-        Result result;
-        BusinessRules businessRules = new BusinessRules(repo);
+        double result;
         try {
-            result = businessRules.fee(city1, vehicle);
+            BusinessRules rules = new BusinessRules(repo);
+            result = rules.fee(city1, vehicle);
         } catch (BadWeatherException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (NoDataException e) {
